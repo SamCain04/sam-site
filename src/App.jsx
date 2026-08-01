@@ -46,7 +46,7 @@ const PROJECTS = [
     muted: true,
     note: "Site no longer online",
     blurb:
-      "A site built to show how unreliable heuristic detectors are at telling AI-written text from human writing, tested across 100+ samples. Reached 5,000+ organic users in its first month.",
+      "A site built to show how unreliable heuristic detectors are at telling AI-written text from human writing, tested across 100+ samples. Reached over a million unique visitors in its first month.",
     stack: [],
     links: []
   },
