@@ -29,7 +29,11 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+      # enablement lets the workflow turn Pages on via the API using the job's
+      # GITHUB_TOKEN, so a fresh repo deploys without touching repo settings.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
