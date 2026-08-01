@@ -132,8 +132,11 @@ const makeRockyRidge = (summitCount, jag, smoothing = 2) => {
   }));
 };
 
-export default function TopMilkyWay() {
-  const canvasRef = useRef(null);
+// Accepts an optional external ref so the water below can mirror this canvas
+// directly, rather than trying to regenerate an identical landscape.
+export default function TopMilkyWay({ canvasRef: externalRef }) {
+  const localRef = useRef(null);
+  const canvasRef = externalRef || localRef;
 
   useEffect(() => {
     const c = canvasRef.current;
@@ -564,7 +567,9 @@ export default function TopMilkyWay() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+    // canvasRef is a ref object and stable for the component's lifetime, so
+    // listing it does not cause the scene to rebuild.
+  }, [canvasRef]);
 
   return <canvas ref={canvasRef} className="top-half" aria-hidden="true" />;
 }

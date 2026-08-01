@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import TopMilkyWay from "./TopMilkyWay";
 import BottomRipples from "./BottomRipples";
 import "./styles.css";
@@ -37,10 +37,13 @@ const PROJECTS = [
 ];
 
 function Hero() {
+  // The water mirrors the sky canvas itself, so both halves share this ref.
+  const skyRef = useRef(null);
+
   return (
     <header className="stage">
-      <TopMilkyWay />
-      <BottomRipples />
+      <TopMilkyWay canvasRef={skyRef} />
+      <BottomRipples skyRef={skyRef} />
       <div className="center-split">
         <h1 className="brand">Sam Cain</h1>
         <p className="tagline">Data Science &amp; Software Engineering</p>
