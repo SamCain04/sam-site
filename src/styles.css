@@ -260,6 +260,41 @@ a:focus-visible {
 }
 .project-links a:hover { text-decoration: underline; }
 
+/* Archived or unlinkable work: present and readable, but visibly stepped
+   back from the projects a visitor can actually go and look at. */
+.project.is-muted {
+  border-style: dashed;
+  background: transparent;
+}
+.project.is-muted .project-title,
+.project.is-muted .project-blurb {
+  color: var(--subtle);
+}
+.project.is-muted:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: none;
+}
+
+.project-status {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: middle;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.project-note {
+  color: var(--subtle);
+  font-size: 13.5px;
+  font-style: italic;
+}
+
 /* -------- Contact -------- */
 .contact-list {
   list-style: none;

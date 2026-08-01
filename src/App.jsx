@@ -10,6 +10,10 @@ const EMAIL = "Samca04@comcast.net";
 const GITHUB = "https://github.com/SamCain04";
 const LINKEDIN = "https://www.linkedin.com/in/samuel-cain-424947259";
 
+// Sam has not described StratoSplit yet. Deliberately says nothing rather than
+// guessing at what it does — replace with the real one-liner when he has it.
+const STRATOSPLIT_BLURB = "Details to come.";
+
 const PROJECTS = [
   {
     title: "EnRoute",
@@ -33,6 +37,29 @@ const PROJECTS = [
         href: "https://github.com/SamCain04/Market_prediction"
       }
     ]
+  },
+  {
+    title: "GPT-Hero",
+    tagline: "AI text-detection demo",
+    period: "2023",
+    status: "Retired",
+    muted: true,
+    note: "Site no longer online",
+    blurb:
+      "A site built to show how unreliable heuristic detectors are at telling AI-written text from human writing, tested across 100+ samples. Reached 5,000+ organic users in its first month.",
+    stack: [],
+    links: []
+  },
+  {
+    title: "StratoSplit",
+    tagline: "",
+    period: "",
+    status: "Private",
+    muted: true,
+    note: "No public link",
+    blurb: STRATOSPLIT_BLURB,
+    stack: [],
+    links: []
   }
 ];
 
@@ -67,26 +94,37 @@ function Hero() {
 }
 
 function ProjectCard({ project }) {
+  const { stack = [], links = [], status, note, muted } = project;
+
   return (
-    <article className="project">
+    <article className={muted ? "project is-muted" : "project"}>
       <div className="project-head">
-        <h3 className="project-title">{project.title}</h3>
-        <span className="project-period">{project.period}</span>
+        <h3 className="project-title">
+          {project.title}
+          {status ? <span className="project-status">{status}</span> : null}
+        </h3>
+        {project.period ? <span className="project-period">{project.period}</span> : null}
       </div>
-      <p className="project-tagline">{project.tagline}</p>
+      {project.tagline ? <p className="project-tagline">{project.tagline}</p> : null}
       <p className="project-blurb">{project.blurb}</p>
-      <ul className="stack" aria-label="Technologies">
-        {project.stack.map((tech) => (
-          <li key={tech}>{tech}</li>
-        ))}
-      </ul>
+      {stack.length ? (
+        <ul className="stack" aria-label="Technologies">
+          {stack.map((tech) => (
+            <li key={tech}>{tech}</li>
+          ))}
+        </ul>
+      ) : null}
       <div className="project-links">
-        {project.links.map((link) => (
-          <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
-            {link.label}
-            <span aria-hidden="true"> →</span>
-          </a>
-        ))}
+        {links.length ? (
+          links.map((link) => (
+            <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+              {link.label}
+              <span aria-hidden="true"> →</span>
+            </a>
+          ))
+        ) : (
+          <span className="project-note">{note}</span>
+        )}
       </div>
     </article>
   );
