@@ -73,6 +73,65 @@ const makeSpikeSprite = () => {
 const BRANCH_U = 0.85;
 const TRAIL_POINTS = 40;
 
+// Explicit summits and saddles joined by straight facets, then only lightly
+// roughened. Colorado's Front Range reads as sharp pyramids with planar faces;
+// plain midpoint displacement is self-similar and comes out rounded, more
+// Appalachian than Rocky, so the facets have to be laid down deliberately.
+const makeRockyRidge = (summitCount, jag, smoothing = 2) => {
+  const nodes = [{ t: 0, v: 0.06 + Math.random() * 0.12 }];
+  const span = 1 / summitCount;
+
+  for (let i = 0; i < summitCount; i++) {
+    const summitT = (i + 0.5) * span + (Math.random() - 0.5) * span * 0.45;
+    // A few dominant peaks carrying the skyline, the rest subordinate.
+    const dominant = Math.random() < 0.32;
+    const v = dominant ? 0.74 + Math.random() * 0.26 : 0.38 + Math.random() * 0.3;
+    nodes.push({ t: summitT, v });
+    if (i < summitCount - 1) {
+      // Cols deep enough to keep summits distinct, shallow enough that the
+      // range still reads as connected massif rather than loose spikes.
+      nodes.push({
+        t: Math.min(0.999, summitT + span * (0.36 + Math.random() * 0.34)),
+        v: v * (0.44 + Math.random() * 0.26)
+      });
+    }
+  }
+  nodes.push({ t: 1, v: 0.06 + Math.random() * 0.12 });
+  nodes.sort((a, b) => a.t - b.t);
+
+  // Subdivide the facets, displacing only a little so the faces stay planar.
+  let pts = nodes;
+  for (let pass = 0; pass < 3; pass++) {
+    const next = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i];
+      const b = pts[i + 1];
+      next.push(a);
+      next.push({
+        t: (a.t + b.t) / 2,
+        v: (a.v + b.v) / 2 + (Math.random() - 0.5) * jag * (b.t - a.t) * 3
+      });
+    }
+    next.push(pts[pts.length - 1]);
+    pts = next;
+  }
+
+  // Round the apexes back off. Straight facets alone come out razor-sharp;
+  // a couple of light smoothing passes keep the angular structure while
+  // weathering the summits into something between spike and dune.
+  for (let pass = 0; pass < smoothing; pass++) {
+    pts = pts.map((p, i, arr) => {
+      if (i === 0 || i === arr.length - 1) return p;
+      return { t: p.t, v: p.v * 0.55 + ((arr[i - 1].v + arr[i + 1].v) / 2) * 0.45 };
+    });
+  }
+
+  return pts.map((p) => ({
+    t: Math.max(0, Math.min(1, p.t)),
+    v: Math.max(0, Math.min(1, p.v))
+  }));
+};
+
 export default function TopMilkyWay() {
   const canvasRef = useRef(null);
 
@@ -88,7 +147,7 @@ export default function TopMilkyWay() {
     let w = 0;
     let h = 0;
     let stars = [];
-    let shore = [];
+    let foreground = null;
     let backdrop = null;
     let meteors = [];
     let nextMeteorAt = 0;
@@ -158,19 +217,113 @@ export default function TopMilkyWay() {
       return b;
     };
 
-    const makeShore = () => {
-      const base = h - 6;
-      const amp = 12;
-      const freq = (2 * Math.PI) / Math.max(600, w);
-      const pts = [];
-      for (let i = 0; i <= 40; i++) {
-        const x = (i / 40) * w;
-        pts.push({
-          x,
-          y: base - Math.sin(x * freq * 1.1) * amp - Math.cos(x * freq * 0.6) * (amp * 0.5)
-        });
+    // A dome with an open shutter, in pure black. Nothing is lit: the shutter
+    // is a wedge left unpainted, so the sky shows through the gap and the
+    // building reads purely by what it occludes.
+    const drawObservatory = (g, x, groundY, s, fill) => {
+      const domeR = s;
+      const baseH = s * 1.05;
+      const baseW = s * 2.15;
+      const domeY = groundY - baseH;
+
+      g.fillStyle = fill;
+      g.beginPath();
+      g.moveTo(x - baseW / 2, groundY + 2);
+      g.lineTo(x - baseW / 2 + s * 0.12, domeY);
+      g.lineTo(x + baseW / 2 - s * 0.12, domeY);
+      g.lineTo(x + baseW / 2, groundY + 2);
+      g.closePath();
+      g.fill();
+
+      // Upper half from PI to 2PI, with the slit wedge skipped rather than
+      // subtracted, so no compositing is needed to punch the opening.
+      const slitFrom = Math.PI * 1.37;
+      const slitTo = Math.PI * 1.47;
+      g.beginPath();
+      g.arc(x, domeY, domeR, Math.PI, slitFrom);
+      g.lineTo(x, domeY);
+      g.arc(x, domeY, domeR, slitTo, Math.PI * 2);
+      g.closePath();
+      g.fill();
+    };
+
+    const makeForeground = () => {
+      const f = document.createElement("canvas");
+      f.width = Math.max(1, Math.floor(w * dpr));
+      f.height = Math.max(1, Math.floor(h * dpr));
+      const g = f.getContext("2d");
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const ridgePath = (pts) => {
+        g.beginPath();
+        g.moveTo(0, h + 4);
+        for (const p of pts) g.lineTo(p.x, p.y);
+        g.lineTo(w, h + 4);
+        g.closePath();
+      };
+
+      const fillRidge = (nodes, baseY, amp, fill, rim, snow) => {
+        const pts = nodes.map((n) => ({ x: n.t * w, y: baseY - n.v * amp }));
+        ridgePath(pts);
+        g.fillStyle = fill;
+        g.fill();
+
+        if (snow) {
+          // Snow sits on the summits and thins downslope, so clip to the
+          // mountain and lay a vertical gradient over it — the peaks that poke
+          // highest simply collect the most, which is what actually happens.
+          const topY = Math.min(...pts.map((p) => p.y));
+          const snowlineY = topY + amp * snow.depth;
+          g.save();
+          ridgePath(pts);
+          g.clip();
+          const grad = g.createLinearGradient(0, topY, 0, snowlineY);
+          grad.addColorStop(0, `rgba(226,238,255,${snow.alpha})`);
+          grad.addColorStop(0.35, `rgba(198,218,250,${snow.alpha * 0.66})`);
+          grad.addColorStop(0.72, `rgba(168,194,238,${snow.alpha * 0.22})`);
+          grad.addColorStop(1, "rgba(150,180,230,0)");
+          g.fillStyle = grad;
+          g.fillRect(0, topY, w, snowlineY - topY);
+          g.restore();
+        }
+
+        if (rim) {
+          g.strokeStyle = rim;
+          g.lineWidth = 1;
+          g.beginPath();
+          g.moveTo(pts[0].x, pts[0].y);
+          for (const p of pts) g.lineTo(p.x, p.y);
+          g.stroke();
+        }
+        return pts;
+      };
+
+      // True silhouette: every range is pure black with no rim, no snow and no
+      // tint. The ranges separate only where one skyline crosses another, and
+      // the landscape is visible solely as absence of stars.
+      const farPts = fillRidge(makeRockyRidge(8, 0.24, 2), h * 1.0, h * 0.42, "#000000");
+
+      // Put the observatory on a high shoulder rather than a knife-edge
+      // summit — a flat-ish spot is where one would actually be built.
+      let best = null;
+      for (let i = 2; i < farPts.length - 2; i++) {
+        const p = farPts[i];
+        if (p.x < w * 0.6 || p.x > w * 0.82) continue;
+        const slope = Math.abs(farPts[i + 2].y - farPts[i - 2].y);
+        const score = (h - p.y) - slope * 3.2;
+        if (!best || score > best.score) best = { p, score };
       }
-      return pts;
+      if (best) {
+        const s = Math.max(11, h * 0.062);
+        drawObservatory(g, best.p.x, best.p.y + 2, s, "#000000");
+      }
+
+      fillRidge(makeRockyRidge(10, 0.26, 2), h * 1.04, h * 0.3, "#000000");
+
+      // Near range drawn last so it occludes the bases behind it.
+      fillRidge(makeRockyRidge(7, 0.3, 3), h * 1.12, h * 0.2, "#000000");
+
+      return f;
     };
 
     const build = () => {
@@ -183,7 +336,7 @@ export default function TopMilkyWay() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       stars = makeStars();
       backdrop = makeBackdrop();
-      shore = makeShore();
+      foreground = makeForeground();
       meteors = [];
       nextMeteorAt = performance.now() + 500 + Math.random() * 1500;
     };
@@ -256,14 +409,9 @@ export default function TopMilkyWay() {
       };
     };
 
-    const drawShore = () => {
-      ctx.fillStyle = "#050708";
-      ctx.beginPath();
-      ctx.moveTo(0, h);
-      for (let i = 0; i < shore.length; i++) ctx.lineTo(shore[i].x, shore[i].y);
-      ctx.lineTo(w, h);
-      ctx.closePath();
-      ctx.fill();
+    // Pre-rendered once per resize, so the whole landscape costs one blit.
+    const drawForeground = () => {
+      if (foreground) ctx.drawImage(foreground, 0, 0, w, h);
     };
 
     const drawStar = (s, alpha) => {
@@ -334,7 +482,7 @@ export default function TopMilkyWay() {
       ctx.globalCompositeOperation = "lighter";
       for (const s of stars) drawStar(s, s.base);
       ctx.globalCompositeOperation = "source-over";
-      drawShore();
+      drawForeground();
     };
 
     const reduced = prefersReducedMotion();
@@ -408,7 +556,7 @@ export default function TopMilkyWay() {
       meteors = alive;
 
       ctx.globalCompositeOperation = "source-over";
-      drawShore();
+      drawForeground();
     };
     raf = requestAnimationFrame(render);
 
