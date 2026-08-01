@@ -5,13 +5,19 @@
 //
 // Usage: npm run resume
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const source = resolve(here, "resume.html");
-const output = resolve(here, "..", "public", "Sam_Cain_Resume.pdf");
+const publicDir = resolve(here, "..", "public");
+const output = resolve(publicDir, "Sam_Cain_Resume.pdf");
+
+// The resume shipped under this name before, and GitHub Pages serves static
+// files with no redirect rules. Anyone holding an old link, or a browser still
+// running a cached bundle, would get a 404 without this copy.
+const legacyOutput = resolve(publicDir, "Sam_Cain_resume_2025.pdf");
 
 const CANDIDATES = [
   process.env.CHROME_PATH,
@@ -51,4 +57,7 @@ execFileSync(
   { stdio: "inherit" }
 );
 
+copyFileSync(output, legacyOutput);
+
 console.log(`Wrote ${output}`);
+console.log(`Wrote ${legacyOutput} (compatibility copy for old links)`);
