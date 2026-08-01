@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sam Cain - Resume</title>
+    <style>
+      /* ATS notes, deliberate choices:
+         - Single column, normal document flow. No tables, text boxes, columns
+           or absolute positioning, all of which scramble text extraction.
+         - Contact details are plain labelled text with full URLs. The previous
+           version used FontAwesome glyphs, which extracted as "+ ... # ... d"
+           and could cost the email and phone entirely.
+         - Standard system fonts only, embedded by the PDF printer.
+         - Plain ASCII throughout: straight quotes, hyphens, "about" instead of
+           the almost-equals sign. Nothing that depends on Unicode mapping.
+         - Real section headings an ATS recognises: Summary, Technical Skills,
+           Experience, Projects, Education. */
+      @page {
+        size: letter;
+        margin: 0.45in 0.55in;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Times New Roman", Times, Georgia, serif;
+        font-size: 10.4pt;
+        line-height: 1.16;
+        color: #000;
+      }
+      /* Centred serif masthead, as the original LaTeX version had. */
+      h1 {
+        text-align: center;
+        font-size: 23pt;
+        font-weight: normal;
+        letter-spacing: 1.2pt;
+        margin: 0 0 5pt;
+      }
+      .contact {
+        text-align: center;
+        font-size: 8.8pt;
+        margin: 0 0 8pt;
+      }
+      .contact span { white-space: nowrap; }
+      h2 {
+        font-size: 11pt;
+        font-weight: bold;
+        letter-spacing: 0.3pt;
+        margin: 6pt 0 2pt;
+        padding-bottom: 2pt;
+        border-bottom: 0.8pt solid #000;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12pt;
+        margin-top: 4pt;
+      }
+      .row:first-of-type { margin-top: 1pt; }
+      .title { font-weight: bold; }
+      .date { white-space: nowrap; font-size: 9.1pt; }
+      .sub {
+        font-style: italic;
+        font-size: 9.3pt;
+        margin: 0 0 0.5pt;
+      }
+      ul {
+        margin: 1.5pt 0 0;
+        padding-left: 14pt;
+      }
+      li { margin-bottom: 0.6pt; }
+      p { margin: 0; }
+      .skills p { margin-bottom: 1.5pt; }
+      .skills b { font-weight: bold; }
+      a { color: #000; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <h1>Sam Cain</h1>
+    <p class="contact">
+      <span>Parker, CO</span> | <span>(720) 717-8701</span> |
+      <span>Samca04@comcast.net</span><br />
+      <span>linkedin.com/in/samuel-cain-424947259</span> |
+      <span>github.com/SamCain04</span> | <span>sam-cain.com</span>
+    </p>
+
+    <h2>Summary</h2>
+    <p>
+      Computer Science graduate who builds privacy-focused distributed systems and
+      applied machine learning. Experience leading small engineering teams from
+      requirements through delivery, with hands-on work in Python, TypeScript, and AWS.
+    </p>
+
+    <h2>Technical Skills</h2>
+    <div class="skills">
+      <p><b>Languages:</b> Python, TypeScript, JavaScript, Java, C, C++, SQL, HTML, CSS</p>
+      <p><b>Frameworks and Libraries:</b> React, Node.js, Electron, Flask, TensorFlow, pandas, NumPy, scikit-learn</p>
+      <p><b>Infrastructure:</b> AWS, Docker, PostgreSQL, MongoDB, Linux, Nginx, Git, GitHub Actions, CI/CD</p>
+      <p><b>Security:</b> Zero-trust architecture, post-quantum cryptography, WireGuard, OpenVPN, TLS, key custody</p>
+      <p><b>Practices:</b> Agile, REST API design, data pipelines, feature engineering, model validation, technical documentation</p>
+    </div>
+
+    <h2>Experience</h2>
+
+    <div class="row">
+      <span class="title">Computer Science Capstone - StratoSplit</span>
+      <span class="date">Aug 2024 - May 2025</span>
+    </div>
+    <p class="sub">General Dynamics and the U.S. Coast Guard</p>
+    <ul>
+      <li>Led a team of 4 engineers to design and deliver StratoSplit, a multicast spatial audio system on AWS, meeting all client technical requirements on schedule.</li>
+      <li>Implemented a zero-trust access architecture to protect sensitive communications and keep access compartmentalized.</li>
+      <li>Wrote modular Python utilities for data handling and validation, and documented the deployment process for repeatability.</li>
+    </ul>
+
+    <div class="row">
+      <span class="title">Artificial Intelligence Intern</span>
+      <span class="date">May 2024 - Aug 2024</span>
+    </div>
+    <p class="sub">ProAmpac</p>
+    <ul>
+      <li>Established the company's first AI initiative and delivered the foundational tooling that started AI adoption across IT.</li>
+      <li>Trained 5+ employees in practical AI workflows and prompt design, improving measured departmental productivity by 30%.</li>
+    </ul>
+
+    <h2>Projects</h2>
+
+    <div class="row">
+      <span class="title">EnRoute - Privacy-First VPN</span>
+      <span class="date">2025 - Present</span>
+    </div>
+    <ul>
+      <li>Designed and built a no-logs VPN in which every tier receives identical protection and paid plans reserve capacity rather than buying stronger privacy.</li>
+      <li>Implemented two-phase admission with client-side key custody, so private keys are generated and held on the client and never reach the control plane.</li>
+      <li>Built the control plane in TypeScript and Node.js on PostgreSQL, plus a hardened Electron desktop client supporting WireGuard and OpenVPN transports.</li>
+      <li>Deployed with Docker Compose behind a TLS proxy, with GitHub Actions running typechecks, tests, and container builds. Live at getenroute.net.</li>
+    </ul>
+
+    <div class="row">
+      <span class="title">GPT-Hero - AI Detection Demonstration</span>
+      <span class="date">Feb 2023</span>
+    </div>
+    <ul>
+      <li>Co-developed a site exposing GPT-Zero's detection flaws across 100+ AI-generated writing samples.</li>
+      <li>Reached over 1,000,000 unique visitors in the first month through organic TikTok distribution.</li>
+    </ul>
+
+    <div class="row">
+      <span class="title">Stock Forecasting with LSTMs</span>
+      <span class="date">Jan 2024</span>
+    </div>
+    <ul>
+      <li>Built an LSTM model in TensorFlow to forecast daily stock closing prices, reaching about 70% directional accuracy in backtests.</li>
+      <li>Engineered windowed features and walk-forward validation over real-time and historical market data feeds, tracking error against a naive baseline.</li>
+    </ul>
+
+    <div class="row">
+      <span class="title">Simple Ticketing System</span>
+      <span class="date">May 2024</span>
+    </div>
+    <ul>
+      <li>Built a Flask and MongoDB web application to streamline support requests, designing the schema, REST endpoints, and authentication.</li>
+      <li>Led a 3-person Agile team and deployed the MVP in under 4 weeks.</li>
+    </ul>
+
+    <h2>Education</h2>
+    <div class="row">
+      <span class="title">Northern Arizona University - B.S. Computer Science</span>
+      <span class="date">Aug 2022 - May 2025</span>
+    </div>
+    <p>
+      Relevant coursework: Post-Quantum Cryptography, Artificial Intelligence,
+      Database Systems, Computer Architecture, Comparison of Learning Algorithms,
+      Computational Theory.
+    </p>
+  </body>
+</html>

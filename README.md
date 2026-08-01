@@ -43,8 +43,26 @@ directory `dist`.
 
 - Projects are the `PROJECTS` array in `src/App.jsx`.
 - Contact details are the constants at the top of `src/App.jsx`.
-- The resume PDF is `public/Sam_Cain_resume_2025.pdf`; the link is derived from
+- The resume PDF is `public/Sam_Cain_Resume.pdf`; the link is derived from
   `import.meta.env.BASE_URL`, so renaming the file means updating `RESUME_URL`.
+
+## Resume
+
+`public/Sam_Cain_Resume.pdf` is generated, not hand-edited. Edit
+`resume/resume.html`, then:
+
+```sh
+npm run resume
+```
+
+That prints the PDF with headless Chrome or Edge (set `CHROME_PATH` to
+override the browser it finds).
+
+The HTML is deliberately ATS-plain: single column, normal document flow, no
+tables or text boxes, standard fonts, plain ASCII, and contact details as
+labelled text rather than icon glyphs. Keep it that way — an applicant
+tracking system reads the extracted text, not the layout. Check changes still
+fit one page before committing.
 
 ## Layout
 

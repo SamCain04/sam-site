@@ -4,7 +4,7 @@ import BottomRipples from "./BottomRipples";
 import "./styles.css";
 
 // Resolved against Vite's base so the link survives a subpath deploy.
-const RESUME_URL = `${import.meta.env.BASE_URL}Sam_Cain_resume_2025.pdf`;
+const RESUME_URL = `${import.meta.env.BASE_URL}Sam_Cain_Resume.pdf`;
 
 const EMAIL = "Samca04@comcast.net";
 const GITHUB = "https://github.com/SamCain04";
