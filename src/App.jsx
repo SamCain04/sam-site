@@ -17,7 +17,7 @@ const PROJECTS = [
     tagline: "Privacy-first VPN",
     period: "2025 — present",
     blurb:
-      "A no-logs VPN built on one rule: every tier gets identical protection, and paying reserves capacity rather than buying better privacy. Anonymous accounts, two-phase admission with client-side key custody, WireGuard and OpenVPN transports, and a fail-closed desktop client.",
+      "A no-logs VPN service architected so that every subscription tier receives identical protection; paid plans reserve capacity rather than purchase stronger privacy. Implements anonymous account provisioning, two-phase admission with client-side key custody, WireGuard and OpenVPN transports, and fail-closed desktop client behavior.",
     stack: ["TypeScript", "Node", "Electron", "PostgreSQL", "WireGuard"],
     links: [{ label: "getenroute.net", href: "https://getenroute.net" }]
   },
