@@ -10,9 +10,6 @@ const EMAIL = "Samca04@comcast.net";
 const GITHUB = "https://github.com/SamCain04";
 const LINKEDIN = "https://www.linkedin.com/in/samuel-cain-424947259";
 
-// Sam has not described StratoSplit yet. Deliberately says nothing rather than
-// guessing at what it does — replace with the real one-liner when he has it.
-const STRATOSPLIT_BLURB = "Details to come.";
 
 const PROJECTS = [
   {
@@ -46,19 +43,20 @@ const PROJECTS = [
     muted: true,
     note: "Site no longer online",
     blurb:
-      "A site built to show how unreliable heuristic detectors are at telling AI-written text from human writing, tested across 100+ samples. Reached over a million unique visitors in its first month.",
+      "A site exposing GPT-Zero's detection flaws across 100+ AI-written samples, built to show how unreliable heuristic detectors are at telling machine text from human writing. Reached over a million unique visitors in its first month, spread organically through TikTok.",
     stack: [],
     links: []
   },
   {
     title: "StratoSplit",
-    tagline: "",
-    period: "",
+    tagline: "Multicast spatial audio on AWS",
+    period: "2024 — 2025",
     status: "Private",
     muted: true,
-    note: "No public link",
-    blurb: STRATOSPLIT_BLURB,
-    stack: [],
+    note: "Client project — no public link",
+    blurb:
+      "CS capstone for General Dynamics and the US Coast Guard. Led a team of four to build a multicast spatial-audio system on AWS, delivered against the client's full technical requirements, with a zero-trust access model keeping sensitive communications compartmentalized and modular Python utilities handling data validation.",
+    stack: ["AWS", "Python", "Multicast", "Zero-trust"],
     links: []
   }
 ];
